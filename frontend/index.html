@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Feedback</title>
+    <link rel="stylesheet" href="static/css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="container">
+        <h1>User Feedback</h1>
+        <form id="feedbackForm" class="feedback-form">
+            <input type="text" id="name" placeholder="Your name" required />
+            <textarea id="comment" placeholder="Your feedback" required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="feedbacks" class="feedbacks"></div>
+    </div>
+
+    <script>
+        async function loadFeedbacks() {
+            const res = await fetch('/api/feedbacks');
+            const feedbacks = await res.json();
+            const container = document.getElementById('feedbacks');
+            container.innerHTML = '';
+            feedbacks.forEach(f => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<h3>${f.name}</h3><p>${f.comment}</p>`;
+                container.appendChild(card);
+            });
+        }
+
+        document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const comment = document.getElementById('comment').value;
+            await fetch('/api/feedbacks', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, comment })
+            });
+            document.getElementById('feedbackForm').reset();
+            loadFeedbacks();
+        });
+
+        loadFeedbacks();
+    </script>
+</body>
+</html>
