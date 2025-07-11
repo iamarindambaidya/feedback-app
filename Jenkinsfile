@@ -4,15 +4,10 @@ pipeline {
     environment {
         DOCKER_API_IMAGE = "dockerforuser/feedback-api:latest"
         DOCKER_FE_IMAGE = "dockerforuser/feedback-frontend:latest"
+        KUBECONFIG = "/var/lib/jenkins/.kube/config"  // <-- Use copied kubeconfig
     }
 
     stages {
-        // stage('Checkout') {
-        //     steps {
-        //         git 'https://github.com/iamarindambaidya/feedback-app.git'
-        //     }
-        // }
-
         stage('Build Docker Images') {
             steps {
                 sh 'docker build -t $DOCKER_API_IMAGE ./api'
@@ -34,12 +29,7 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-                    sh '''
-                        export KUBECONFIG=$KUBECONFIG
-                        kubectl apply -f k8s/
-                    '''
-                }
+                sh 'kubectl apply -f k8s/'
             }
         }
     }
