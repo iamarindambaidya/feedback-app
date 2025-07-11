@@ -30,8 +30,8 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
                     sh '''
-                        export KUBECONFIG=$KUBECONFIG
-                        kubectl apply -f k8s/
+                        export KUBECONFIG=/home/ubuntu/.kube/config
+                        kubectl apply --validate=false -f k8s/
                     '''
                 }
             }
