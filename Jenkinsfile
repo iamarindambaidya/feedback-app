@@ -4,7 +4,6 @@ pipeline {
     environment {
         DOCKER_API_IMAGE = "dockerforuser/feedback-api:latest"
         DOCKER_FE_IMAGE = "dockerforuser/feedback-frontend:latest"
-        KUBECONFIG = "/var/lib/jenkins/.kube/config"  // <-- Use copied kubeconfig
     }
 
     stages {
@@ -29,7 +28,12 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl apply -f k8s/'
+                withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
+                    sh '''
+                        export KUBECONFIG=$KUBECONFIG
+                        kubectl apply -f k8s/
+                    '''
+                }
             }
         }
     }
