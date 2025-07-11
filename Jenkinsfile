@@ -2,11 +2,18 @@ pipeline {
     agent any
 
     environment {
+        REPO_URL = 'https://github.com/iamarindambaidya/feedback-app.git'
         DOCKER_API_IMAGE = "dockerforuser/feedback-api:latest"
         DOCKER_FE_IMAGE = "dockerforuser/feedback-frontend:latest"
     }
 
     stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', url: "${REPO_URL}"
+            }
+        }
+
         stage('Build Docker Images') {
             steps {
                 sh 'docker build -t $DOCKER_API_IMAGE ./api'
@@ -30,8 +37,9 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
                     sh '''
-                        export KUBECONFIG=/home/ubuntu/.kube/config
-                        kubectl apply --validate=false -f k8s/
+                        echo "🚀 Deploying to Kubernetes..."
+                        export KUBECONFIG=/var/lib/jenkins/.kube/config
+                        kubectl apply -f k8s/
                     '''
                 }
             }
