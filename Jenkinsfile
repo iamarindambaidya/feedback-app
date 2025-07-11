@@ -7,11 +7,11 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/iamarindambaidya/feedback-app.git'
-            }
-        }
+        // stage('Checkout') {
+        //     steps {
+        //         git 'https://github.com/iamarindambaidya/feedback-app.git'
+        //     }
+        // }
 
         stage('Build Docker Images') {
             steps {
