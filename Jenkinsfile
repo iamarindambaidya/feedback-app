@@ -38,7 +38,7 @@ pipeline {
                 withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
                     sh '''
                         echo "🚀 Deploying to Kubernetes..."
-                        export KUBECONFIG=/var/lib/jenkins/.kube/config
+                        export KUBECONFIG=/home/arindam/.kube/config
                         kubectl apply -f k8s/
                     '''
                 }
